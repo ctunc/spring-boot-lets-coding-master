@@ -19,8 +19,8 @@ public class UserApi {
     @PostConstruct
     public void init(){
         User user =new User();
-        user.setName("blbabla");
-        user.setLastName("asdasdasd");
+        user.setName("letscoading");
+        user.setLastName("spring-boot");
         userRepository.save(user);
     }
 
