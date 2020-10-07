@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -34,12 +35,14 @@ public class UserController {
 
     @PostConstruct
     public void init(){
+        DateUtil dateUtil=new DateUtil();
+        Date date=dateUtil.formattedDate(new Date());
         User user =new User();
         user.setId("0001");
         user.setName("ctunc");
         user.setLastName("tunc");
         user.setAdress("istanbul");
-        user.setBirthDate(Calendar.getInstance().getTime());
+        user.setBirthDate(date);
         userRepository.save(user);
     }
 
