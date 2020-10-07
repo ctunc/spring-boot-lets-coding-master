@@ -12,6 +12,7 @@
         <module>spring-boot-hello-api</module>
         <module>spring-boot-mongo-rest-api</module>
         <module>spring-boot-elasticsearch</module>
+        <module>spring-boot-datajpa-postgresql</module>
     </modules>
 
 
