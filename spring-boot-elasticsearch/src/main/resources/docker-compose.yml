@@ -1,0 +1,9 @@
+version: '3.1'
+services:
+    elasticsearch:
+        image: elasticsearch:7.9.2
+        ports:
+        - '9200:9200' #http port
+        - '9300:9300' #tcp port
+        environment:
+          - discovery.type=single-node
