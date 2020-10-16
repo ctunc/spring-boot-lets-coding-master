@@ -1,12 +1,21 @@
 package com.letscoding.dto;
 
-import lombok.Data;
+import com.letscoding.entity.Adress;
+import lombok.*;
+import org.dozer.Mapping;
 
+import java.io.Serializable;
 import java.util.List;
 
-@Data
-public class UserDto {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(of = {"id"})
+public class UserDto implements Serializable {
 
+    @Mapping("id")
     private Long id;
 
     private String name;

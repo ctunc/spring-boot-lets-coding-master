@@ -1,44 +1,36 @@
 package com.letscoding.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name="user_address")
-@Getter
-@Setter
+@Table(name = "user_adresses")
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
+@Getter
+@Setter
 @ToString
-public class Adress implements Serializable {
+public class Adress {
 
     @Id
-    @SequenceGenerator(name = "seq_user_address", allocationSize = 1)
-    @GeneratedValue(generator = "seq_user_address",strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "seq_user_adres", allocationSize = 1)
+    @GeneratedValue(generator = "seq_user_adres", strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(length = 250, name = "address")
-    private String address;
+    @Column(length = 500, name = "adress")
+    private String adress;
 
-    @Column(name="active")
+    @Column(name = "adress_type",length = 5)
+    private String adressType;
+
+    @Column(name = "active")
     private Boolean active;
 
-    @Enumerated
-    private AddressType adressType;
-
     @ManyToOne
-    @JoinColumn(name="user_address_id")
+    @JoinColumn(name = "user_adres_id")
     private User user;
-
-
-    public enum AddressType{
-        HOME_ADDRESS,
-        WORK_ADDRESS,
-        OTHER
-    }
-
-
 }

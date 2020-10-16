@@ -1,5 +1,6 @@
 package com.letscoding.service.impl;
 
+import com.letscoding.annotations.TestProfile;
 import com.letscoding.dto.UserDto;
 import com.letscoding.entity.Adress;
 import com.letscoding.entity.User;
@@ -7,41 +8,58 @@ import com.letscoding.repository.AddressRepository;
 import com.letscoding.repository.UserRepository;
 import com.letscoding.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.dozer.DozerBeanMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+/*
+* Try to find mapping enum column for dozer mapping configuration
+* */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private  UserRepository userRepository;
 
     private final AddressRepository addressRepository;
 
+    @Autowired
+    private DozerBeanMapper mapper;
+
     @Override
+    @Transactional
     public UserDto save(UserDto userDto) {
-        User user =new User();
-        user.setName(userDto.getName());
-        user.setLastname(userDto.getLastname());
-        User userDb=userRepository.save(user);
+        User userEntity = new User();
+        mapper.map(userDto,userEntity);
+        userEntity = userRepository.save(userEntity);
 
-        List<Adress> addressList=new ArrayList<>();
+        UserDto saverUser=new UserDto();
+        mapper.map(userEntity,saverUser);
 
-        userDto.getUserAddress().forEach(item->{
-            Adress adress=new Adress();
-            adress.setActive(true);
-            adress.setAddress(item);
-            adress.setAdressType(Adress.AddressType.HOME_ADDRESS);
-            adress.setUser(userDb);
-            addressList.add(adress);
+        List<Adress> liste = new ArrayList<>();
+        User finalUserEntity = userEntity;
+        userDto.getUserAddress().forEach(item -> {
+            Adress adres = new Adress();
+            adres.setAdress(item);
+            adres.setAdressType("1");
+            adres.setActive(true);
+            adres.setUser(finalUserEntity);
+            liste.add(adres);
         });
-        userDto.setId(userDb.getId());
-        return userDto;
+        addressRepository.saveAll(liste);
+        saverUser.setId(finalUserEntity.getId());
+        return saverUser;
     }
 
     @Override
@@ -51,16 +69,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAll() {
-        List<User> user =userRepository.findAll();
+        List<User> userEntities =userRepository.findAll();
         List<UserDto> userDtos=new ArrayList<>();
-
-        user.forEach(item->{
+        userEntities.forEach(item->{
             UserDto userDto=new UserDto();
-            userDto.setName(item.getName());
-            userDto.setLastname(item.getLastname());
-            userDto.setId(item.getId());
-            userDto.setUserAddress(item.getUserAddress().stream().map(Adress::getAddress).collect(Collectors.toList())
-            );
+            mapper.map(item,userDto);
+                    userDto.setUserAddress(
+                            (item.getUserAddress() != null) ?
+                                    item.getUserAddress().stream().map(Adress::getAdress).collect(Collectors.toList())
+                                    : null);
             userDtos.add(userDto);
                 }
                 );
@@ -72,4 +89,47 @@ public class UserServiceImpl implements UserService {
     public Page<UserDto> getAll(Pageable pageable) {
         return null;
     }
+
+    @Override
+    @Transactional
+    public UserDto saveWithoutDozerMapping(UserDto userDto) {
+
+        User user = new User();
+        user.setName(userDto.getName());
+        user.setLastname(userDto.getLastname());
+        final  User userDb = userRepository.save(user);
+
+        List<Adress> liste = new ArrayList<>();
+        userDto.getUserAddress().forEach(item -> {
+            Adress adress = new Adress();
+            adress.setAdress(item);
+            adress.setAdressType("1");
+            adress.setActive(true);
+            adress.setUser(userDb);
+            liste.add(adress);
+        });
+        addressRepository.saveAll(liste);
+        userDto.setId(userDb.getId());
+        return userDto;
+    }
+
+    @Override
+    public List<UserDto> getAllWithoutDozerMapping() {
+        List<User> users = userRepository.findAll();
+        List<UserDto> userDtos = new ArrayList<>();
+
+        users.forEach(it -> {
+            UserDto userDto =new UserDto();
+            userDto.setId(it.getId());
+            userDto.setName(it.getName());
+            userDto.setLastname(it.getLastname());
+            userDto.setUserAddress(
+                    it.getUserAddress() != null ?
+                            it.getUserAddress().stream().map(Adress::getAdress).collect(Collectors.toList())
+                            : null);
+            userDtos.add(userDto);
+        });
+        return userDtos;
+    }
+
 }

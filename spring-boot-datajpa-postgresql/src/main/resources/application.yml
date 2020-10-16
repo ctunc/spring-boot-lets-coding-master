@@ -1,0 +1,38 @@
+server:
+  port: 8081
+
+
+spring:
+  profiles:
+    active: test
+  datasource:
+    url: jdbc:postgresql://localhost:5432/javadb
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+---
+spring:
+  profiles: prod
+
+  datasource:
+    username: produser
+    password: prodpass
+
+
+---
+spring:
+  profiles: test
+
+  datasource:
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:example}
+
+
+
+
+
