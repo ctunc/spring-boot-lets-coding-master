@@ -15,6 +15,7 @@
         <module>spring-boot-datajpa-postgresql</module>
         <module>spring-boot-batch-job</module>
         <module>spring-boot-batch-csvto-db</module>
+        <module>spring-boot-batch-tasklet-example</module>
     </modules>
 
 
