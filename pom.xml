@@ -17,6 +17,7 @@
         <module>spring-boot-batch-csvto-db</module>
         <module>spring-boot-batch-tasklet-example</module>
         <module>spring-boot-batch-schedular</module>
+        <module>spring-boot-cloud-task-cron-job-example</module>
     </modules>
 
 

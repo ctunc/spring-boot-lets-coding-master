@@ -1,0 +1,25 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: ctunc-spring-cloud-task-cron-job-example-newesst
+spec:
+  schedule: "*/2 * * * *"
+  suspend: false
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: spring-cloud-task-cronjob-example
+            image: 'ctunc/spring-cloud-task-cron-job-example:0.1.5'
+            envFrom:
+            - configMapRef:
+                name: spring-cloud-task-cronjob-config
+            - secretRef:
+                name: spring-cloud-task-cronjob-secret
+            args:
+            - /bin/sh
+            - -c
+            - echo 'Starting Spring Batch Task' && java -jar app.jar
+          restartPolicy: OnFailure
+---
